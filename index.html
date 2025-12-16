@@ -1,0 +1,975 @@
+<!doctype html>
+<html lang="zh-TW" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>你是哪種小說女主</title>
+  <script src="/_sdk/element_sdk.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;900&amp;family=Noto+Sans+TC:wght@300;400;500;700&amp;display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <style>
+    body {
+      box-sizing: border-box;
+    }
+    
+    .app-wrapper {
+      background: linear-gradient(135deg, #ffd1dc 0%, #e0b0d5 50%, #c8a2d0 100%);
+      min-height: 100%;
+      width: 100%;
+      overflow: auto;
+      font-family: 'Noto Sans TC', sans-serif;
+    }
+    
+    .card {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 32px;
+      box-shadow: 0 25px 70px rgba(0, 0, 0, 0.25);
+      backdrop-filter: blur(10px);
+    }
+    
+    .option-card {
+      border: 2px solid transparent;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      background: linear-gradient(white, white) padding-box,
+                  linear-gradient(135deg, #ffd1dc, #c8a2d0) border-box;
+    }
+    
+    .option-card:hover {
+      transform: translateX(8px);
+      box-shadow: 0 8px 25px rgba(200, 162, 208, 0.3);
+      border-color: #e0b0d5;
+    }
+    
+    .option-card.selected {
+      background: linear-gradient(135deg, #ffd1dc 0%, #f8e4f0 100%);
+      border-color: #e0b0d5;
+      transform: translateX(8px);
+    }
+    
+    .btn-primary {
+      background: linear-gradient(135deg, #e0b0d5 0%, #c8a2d0 100%);
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(200, 162, 208, 0.4);
+    }
+    
+    .btn-primary:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(200, 162, 208, 0.5);
+    }
+    
+    .btn-primary:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+    
+    .progress-bar {
+      height: 6px;
+      background: rgba(255, 255, 255, 0.4);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+    
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #ffd1dc 0%, #c8a2d0 100%);
+      transition: width 0.5s ease;
+      border-radius: 999px;
+    }
+    
+    .fade-in {
+      animation: fadeIn 0.6s ease;
+    }
+    
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    .result-card {
+      background: linear-gradient(135deg, #ffffff 0%, #fef3f8 100%);
+      border: 4px solid;
+      border-radius: 0;
+      padding: 40px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 15px 50px rgba(0, 0, 0, 0.2);
+    }
+    
+    .result-card::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(255, 209, 220, 0.1) 0%, transparent 70%);
+      animation: rotate 20s linear infinite;
+    }
+    
+    @keyframes rotate {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    
+    .result-icon {
+      width: 120px;
+      height: 120px;
+      margin: 0 auto 24px;
+      background: linear-gradient(135deg, #ffd1dc 0%, #e0b0d5 100%);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 64px;
+      box-shadow: 0 10px 40px rgba(224, 176, 213, 0.4);
+      position: relative;
+      z-index: 1;
+    }
+    
+    .title-font {
+      font-family: 'Noto Serif TC', serif;
+    }
+    
+    .sparkle {
+      display: inline-block;
+      animation: sparkle 2s ease-in-out infinite;
+    }
+    
+    @keyframes sparkle {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.6; transform: scale(1.2); }
+    }
+    
+    .trait-card {
+      background: white;
+      border-radius: 20px;
+      padding: 24px 16px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+      transition: all 0.3s ease;
+      border: 2px solid rgba(224, 176, 213, 0.2);
+    }
+    
+    .trait-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 25px rgba(224, 176, 213, 0.3);
+    }
+    
+    .save-hint {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0, 0, 0, 0.85);
+      color: white;
+      padding: 16px 32px;
+      border-radius: 50px;
+      font-size: 16px;
+      z-index: 1000;
+      animation: slideDown 0.3s ease;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+    }
+    
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+      }
+    }
+    
+    .capturing {
+      animation: pulse 0.5s ease;
+    }
+    
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.8; }
+    }
+  </style>
+  <style>@view-transition { navigation: auto; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+ </head>
+ <body class="h-full">
+  <div class="app-wrapper h-full">
+   <div class="h-full flex items-center justify-center p-4 md:p-6">
+    <div class="card w-full max-w-4xl p-6 md:p-12 fade-in" id="quizCard"><!-- Start Screen -->
+     <div id="startScreen">
+      <div class="text-center">
+       <div class="mb-6">
+        <div class="text-7xl mb-4 sparkle">
+         📖
+        </div>
+        <h1 class="title-font text-5xl md:text-6xl font-black mb-4 bg-gradient-to-r from-pink-400 via-purple-400 to-purple-500 bg-clip-text text-transparent" id="quizTitleText">你是哪種小說女主</h1>
+        <p class="text-xl text-gray-600 mb-8" id="quizSubtitleText">8個情境題揭曉你的女主人設</p>
+       </div>
+       <div class="bg-gradient-to-r from-pink-50 to-purple-50 rounded-3xl p-8 mb-8 border-2 border-pink-100">
+        <div class="grid grid-cols-2 gap-8 text-center">
+         <div>
+          <div class="text-5xl mb-3">
+           💭
+          </div>
+          <div class="text-3xl font-bold text-purple-600">
+           8題
+          </div>
+          <div class="text-base text-gray-600 mt-2">
+           精心設計的情境題目
+          </div>
+         </div>
+         <div>
+          <div class="text-5xl mb-3">
+           ✨
+          </div>
+          <div class="text-3xl font-bold text-purple-600">
+           專屬
+          </div>
+          <div class="text-base text-gray-600 mt-2">
+           為你量身打造的人設      
+          </div>
+         </div>
+        </div>
+       </div><button onclick="startQuiz()" class="btn-primary text-white px-16 py-5 rounded-full text-xl font-bold" id="startButtonText"> 開始測驗 </button>
+      </div>
+     </div><!-- Quiz Screen -->
+     <div id="quizScreen" style="display: none;">
+      <div class="mb-8">
+       <div class="flex justify-between items-center mb-4"><span class="text-sm font-bold text-purple-600" id="questionCounter">第 1 題 / 共 8 題</span>
+        <div class="flex items-center gap-3"><span class="text-sm font-semibold text-purple-500">剩餘時間</span>
+         <div class="relative w-12 h-12">
+          <svg class="transform -rotate-90 w-12 h-12"><circle cx="24" cy="24" r="16" stroke="rgba(224, 176, 213, 0.3)" stroke-width="3" fill="none"></circle> <circle id="countdownPath" cx="24" cy="24" r="16" stroke="#e0b0d5" stroke-width="3" fill="none" style="stroke-dasharray: 100.53; stroke-dashoffset: 0; transition: stroke-dashoffset 1s linear;"></circle>
+          </svg>
+          <div class="absolute inset-0 flex items-center justify-center"><span id="countdownText" class="text-lg font-bold text-purple-600">12</span>
+          </div>
+         </div>
+        </div>
+       </div>
+       <div class="progress-bar">
+        <div class="progress-fill" id="progressBar" style="width: 12.5%;"></div>
+       </div>
+      </div>
+      <div class="mb-8">
+       <div class="flex items-start gap-4 mb-8">
+        <div class="text-4xl mt-1" id="questionEmoji">
+         🌧️
+        </div>
+        <h2 class="text-2xl md:text-3xl font-bold text-gray-800 leading-relaxed" id="questionText"></h2>
+       </div>
+       <div class="space-y-4" id="optionsContainer"></div>
+      </div>
+     </div><!-- Result Screen -->
+     <div id="resultScreen" style="display: none;">
+      <div class="text-center mb-8">
+       <h2 class="title-font text-3xl font-black mb-2 text-gray-700">你的女主類型是</h2>
+      </div>
+      <div class="result-card mb-8" id="resultCard">
+       <div class="result-icon" id="resultIcon">
+        👑
+       </div>
+       <h3 class="title-font text-4xl md:text-5xl font-black text-center mb-6" id="resultTitle" style="position: relative; z-index: 1;">職場女王</h3>
+       <p class="text-center text-lg text-gray-700 leading-relaxed px-4 mb-8" id="resultDescription" style="position: relative; z-index: 1;"></p>
+       <div class="space-y-6 text-left" style="position: relative; z-index: 1;">
+        <div class="bg-white bg-opacity-60 p-6 rounded-lg">
+         <h4 class="font-bold text-lg mb-3 flex items-center gap-2"><span class="text-2xl">💭</span> <span>你的性格特質</span></h4>
+         <p class="text-gray-700 leading-relaxed" id="resultPersonality"></p>
+        </div>
+        <div class="bg-white bg-opacity-60 p-6 rounded-lg">
+         <h4 class="font-bold text-lg mb-3 flex items-center gap-2"><span class="text-2xl">✨</span> <span>你的優勢</span></h4>
+         <p class="text-gray-700 leading-relaxed" id="resultStrength"></p>
+        </div>
+        <div class="bg-white bg-opacity-60 p-6 rounded-lg">
+         <h4 class="font-bold text-lg mb-3 flex items-center gap-2"><span class="text-2xl">💡</span> <span>成長建議</span></h4>
+         <p class="text-gray-700 leading-relaxed" id="resultWeakness"></p>
+        </div>
+       </div>
+      </div><!-- Traits Grid -->
+      <div class="mb-8">
+       <h3 class="title-font text-2xl font-bold text-center mb-6 text-gray-800">✨ 你的特質分析</h3>
+       <div class="grid grid-cols-2 md:grid-cols-4 gap-4" id="traitsContainer"></div>
+      </div><!-- Best Match and Clash in one row -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+       <div class="bg-gradient-to-r from-green-50 to-emerald-50 rounded-3xl p-6 border-2 border-green-200">
+        <div class="flex items-start gap-4">
+         <div class="text-4xl">
+          💚
+         </div>
+         <div class="flex-1">
+          <h4 class="font-bold text-xl text-green-700 mb-2">最合拍的女主</h4>
+          <p class="text-lg font-semibold text-green-600 mb-2" id="bestMatchType"></p>
+          <p class="text-gray-700 leading-relaxed" id="bestMatchReason"></p>
+         </div>
+        </div>
+       </div>
+       <div class="bg-gradient-to-r from-orange-50 to-red-50 rounded-3xl p-6 border-2 border-orange-200">
+        <div class="flex items-start gap-4">
+         <div class="text-4xl">
+          ⚡
+         </div>
+         <div class="flex-1">
+          <h4 class="font-bold text-xl text-orange-700 mb-2">容易有摩擦的女主</h4>
+          <p class="text-lg font-semibold text-orange-600 mb-2" id="clashType"></p>
+          <p class="text-gray-700 leading-relaxed" id="clashReason"></p>
+         </div>
+        </div>
+       </div>
+      </div>
+      <div class="text-center mb-8">
+       <p class="text-gray-600 text-base mb-2">📸 長按畫面保存圖片</p>
+       <p class="text-purple-600 font-semibold text-lg">和朋友分享你的測驗結果～</p>
+      </div><!-- LINE Official Account CTA -->
+      <div class="bg-gradient-to-r from-green-50 to-emerald-50 rounded-3xl p-8 mb-8 border-2 border-green-200">
+       <div class="text-center">
+        <p class="text-lg text-gray-700 leading-relaxed mb-6">💡 你的形象 值得被專業定義。<br>
+          點擊下方按鈕加入 LINE 官方帳號，預約【小說女主形象改造】，讓你的形象從此專屬定製，不再將就</p><a href="https://line.me/R/ti/p/@YOUR_LINE_ID" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-3 bg-gradient-to-r from-green-500 to-green-600 text-white px-10 py-4 rounded-full text-lg font-bold hover:shadow-xl transition-all duration-300 hover:-translate-y-1"> <span class="text-2xl">💬</span> <span>加入 LINE 官方帳號</span> </a>
+       </div>
+      </div>
+      <div class="text-center"><button onclick="restartQuiz()" class="btn-primary text-white px-12 py-4 rounded-full text-lg font-bold"> 重新測驗 </button>
+      </div>
+     </div>
+    </div>
+   </div>
+  </div>
+  <script>
+    const defaultConfig = {
+      background_color: "#ffd1dc",
+      surface_color: "#ffffff",
+      text_color: "#1f2937",
+      primary_action_color: "#e0b0d5",
+      secondary_action_color: "#c8a2d0",
+      font_family: "Noto Sans TC",
+      font_size: 16,
+      quiz_title: "你是哪種小說女主",
+      quiz_subtitle: "8個情境題揭曉你的女主人設",
+      start_button_text: "開始測驗"
+    };
+
+    const quizData = [
+      {
+        emoji: "   ️",
+        question: "走在路上突然下起大雨，你會？",
+        options: [
+          { text: "淡定地繼續走，雨而已，不影響我", type: "神秘特工" },
+          { text: "立刻打電話叫司機來接", type: "世家千金" },
+          { text: "享受淋雨的感覺，反正衣服濕了更有型", type: "反叛貴族" },
+          { text: "迅速分析最近的躲雨地點並規劃路線", type: "天才學   " }
+        ]
+      },
+      {
+        emoji: "🎭",
+        question: "參加一個不熟悉的社交聚會，你會？",
+        options: [
+          { text: "主動掌控全場話題，成為焦點", type: "職場女王" },
+          { text: "找個安靜角落觀察每個人", type: "暗夜玫瑰" },
+          { text: "帶本書躲到陽台去", type: "天才學霸" },
+          { text: "隨心所欲，想聊就聊，不想聊就走", type: "反叛貴族" }
+        ]
+      },
+      {
+        emoji: "💼",
+        question: "工作中遇到不合理的要求，你會？",
+        options: [
+          { text: "直接拒絕並說明理由，該硬氣就硬氣", type: "職場女王" },
+          { text: "表面答應，暗中按自己的方式處理", type: "暗夜玫瑰" },
+          { text: "冷漠地說「不」，然後繼續做自己的事", type: "神秘特工" },
+          { text: "用數據和邏輯證明這個  求不可行", type: "天才學霸" }
+        ]
+      },
+      {
+        emoji: "💝",
+        question: "有人送你一份昂貴的禮物，你會？",
+        options: [
+          { text: "開心收下，本來就該對我好", type: "世家千金" },
+          { text: "思考對方的目的，禮物背後有什麼意圖", type: "暗夜玫瑰" },
+          { text: "禮貌拒絕，不想欠人情", type: "神秘特工" },
+          { text: "收下  會回禮，保  平等關係", type: "職場女王" }
+        ]
+      },
+      {
+        emoji: "🎨",
+        question: "週末你最想做什麼？",
+        options: [
+          { text: "去高級餐廳或藝術展，享受精緻生活", type: "世家千金" },
+          { text: "騎機車去郊外，或做些刺激的事", type: "反叛貴族" },
+          { text: "在家看書、研究自己興趣的課題", type: "天才學霸" },
+          { text: "參加商務聚會或拓展人脈", type: "職場女王" }
+        ]
+      },
+      {
+        emoji: "😤",
+        question: "有人在背後說你壞話，你會？",
+        options: [
+          { text: "直接當面對質，讓對方知道我的厲害", type: "職場女王" },
+          { text: "記在心裡，找機會讓對方付出代價", type: "暗夜玫瑰" },
+          { text: "無所謂，別人的看法不重要", type: "神秘特工" },
+          { text: "覺得無聊，懶得   會這種低級行   ", type: "反叛貴族" }
+        ]
+      },
+      {
+        emoji: "🎯",
+        question: "面對一個重要的人生選擇，你會？",
+        options: [
+          { text: "相信直覺，跟著感覺走", type: "世家千金" },
+          { text: "列出所有利弊，用理性分析", type: "天才學霸" },
+          { text: "選擇最能展現我能力和野心的那個", type: "職場女王" },
+          { text: "表面徵詢意見，實際早有盤算", type: "暗夜玫瑰" }
+        ]
+      },
+      {
+        emoji: "🌙",
+        question: "深夜獨處，你會想什麼？",
+        options: [
+          { text: "規劃明天的  程和目標", type: "職場女王" },
+          { text: "思考人生、宇宙、哲學問題", type: "天才學霸" },
+          { text: "回憶過去的某些片段，但不會表現出來", type: "神秘特工" },
+          { text: "想著下一次要去哪裡冒險", type: "反叛貴族" }
+        ]
+      }
+    ];
+
+    const resultTypes = {
+      "職場女王": {
+        icon: "👑",
+        title: "職場女王",
+        color: "#dc2626",
+        description: "自信強勢，職場如魚得水，掌控慾強，目標明確，天生的領導風範。你總是能在人群中脫穎而出，用實力說話。有時顯得強勢傲慢，但內心深處可能藏著柔軟或脆弱的一面。",
+        personality: "你天生就是領導者。走進房間的那一刻，所有人的目光都會被你吸引。你習慣掌控局面，喜歡制定規則而不是遵守規則。你對自己的能力有絕對的自信，也對未來有清晰的規劃。你不怕競爭，反  享受在壓力中證明自己的過程。",
+        strength: "你的執   力和決斷力是你最大的武器。當別人還在猶豫不決時，你已經做出選擇並開始行動。你懂得如何激勵團隊，也知道如何在關鍵時刻做出正確的判斷。你的野心和實力讓你在職場上無往不利。",
+        weakness: "你太習慣強勢和掌控，有時會忽略他人的感受。不是每個人都能跟上你的節奏，也不是每件事都需要用命令的方式解決。試著偶爾放下盔甲，展現柔軟的一面，你會發現脆弱也是一種力量。",
+        traits: [
+          { name: "領導力", value: 95, emoji: "👑" },
+          { name: "自信度", value: 98, emoji: "💪" },
+          { name: "野心指數", value: 92, emoji: "🎯" },
+          { name: "柔軟度", value: 45, emoji: "💝" }
+        ],
+        bestMatch: { type: "神秘特工", reason: "你們都有強大的內心世界，能互相欣賞彼此的實力" },
+        clash: { type: "反叛  族", reason: "兩人都太有主見，  易在決策上產生衝突" }
+      },
+      "世家千金": {
+        icon: "💎",
+        title: "世家千金",
+        color: "#f59e0b",
+        description: "出身高貴，能夠為所欲為，從來不需要看人臉色的嬌嬌女。沒吃過苦，所以保有一份難得的天真。率真不做作，能分辨得出善惡，內心有正義感與善良。",
+        personality: "你從來就被寵愛和保護，所以你保有一份珍貴的天真。你不需要偽裝或算計，因為你從來不需要為生存而掙扎。你相信這個世界本質上是美好的，相信人性本善。你的直率有時會被誤解為天真，但那其實是一種勇氣——敢於在複雜的世界裡保持簡單。",
+        strength: "你的善良和正義感是你最閃耀的特質。你不會因為利益而妥協原則，也不會因為害怕而放棄正確的事。你的真誠能溫暖身邊的人，你的樂觀能感染周圍的氛圍。在這個充滿算計的世界裡，你的純真反而成為最稀有的寶藏。",
+        weakness: "你太  信別人，有時會被利用或傷  。不是每個人都像你一樣善良，也  是每個微笑背後都是真心。學會保護自己不是變得冷漠，而是讓你的善良更有力量。適度的警惕能讓你走得更遠。",
+        traits: [
+          { name: "天真度", value: 88, emoji: "🌸" },
+          { name: "正義感", value: 85, emoji: "⚖️" },
+          { name: "優雅度", value: 95, emoji: "👗" },
+          { name: "獨立性", value: 50, emoji: "🦋" }
+        ],
+        bestMatch: { type: "職場女王", reason: "她的強大能保護你的天真，你的善良能溫暖她的心" },
+        clash: { type: "暗夜玫瑰", reason: "你的單純容易被她利用，價值觀差異太大" }
+      },
+      "神秘特工": {
+        icon: "🕶️",
+        title: "神秘特工",
+        color: "#6366f1",
+        description: "外表冷漠，表情不多，話少，與人保持距離，彷彿對一切漠不關心。你的神秘感讓人著迷又敬畏。內心可   有滾熱的感情、過往的創傷，或強烈的專  目標。",
+        personality: "你習慣把自己藏在冰冷的外殼之下。不是你不在乎，而是你太在乎，所以選擇不表現出來。你用沉默保護自己，用距離維持安全感。你的眼神總是看向遠方，彷彿這個世界的喧囂與你無關。但  有你自己知道，你的內心比任  人都更洶湧。",
+        strength: "你的專注力和自制力無人能及。當別人被情緒左右時，你能保持絕對的冷靜和理智。你不會被外界干擾，也不會因為他人的評價而動搖。你的神秘感是你的保護色，也是你的魅力所在。你總能在關鍵時刻做出最正確的判斷。",
+        weakness: "你太習慣獨自承受，有時會把自己困在孤獨裡。不是所有的靠近都是傷害，也不是所有的表達都是軟弱。試著偶爾放下防備，讓值得信任的人走進你的世界。你會發現，分享並不會讓你失去力量，反而會讓你更完整。",
+        traits: [
+          { name: "神秘感", value: 98, emoji: "🌙" },
+          { name: "專注力", value: 95, emoji: "🎯" },
+          { name: "冷靜度", value: 96, emoji: "❄️" },
+          { name: "表達力", value: 35, emoji: "💬" }
+        ],
+        bestMatch: { type: "天才學霸", reason: "你們都享受安靜，能   解彼此的沉默" },
+        clash: { type: "世家千金", reason: "她的熱情和你的冷漠形成強烈反差" }
+      },
+      "天才學霸": {
+        icon: "📚",
+        title: "天才學霸",
+        color: "#10b981",
+        description: "安靜，喜愛閱讀和思考，知識儲備豐富，沉浸在自己的精神世界。你的智慧是最迷人的武器。可能顯得疏離、不善表達或有社交恐懼。",
+        personality: "你活在自己的精神世界裡，   裡有書籍、知識、   輯和真理。你對世界充滿好奇，但你更喜歡通過閱讀和思考來探索，而不是社交。你享受獨處的時光，因為只有在安靜中，你才能聽見自己思考的聲音。你不是不合群，只是覺得大多數社交都太膚淺。",
+        strength: "你的智慧和邏輯思維是你最強大的武器。你能看透事物的本質，用理性分析複雜的問題。你的知識儲備讓你在任何領域都能快速上手。你不需要用言語證明自己，因為你的實力會說話。你的深度和內涵是時間越久越能體現的魅力。",
+        weakness: "你太沉浸在自己的世界裡，有時會忽略現實中的人際關係。不是所有問題都能用邏輯解決，也不是所有情感都需要理性分析。試著走出舒適圈，你會發現人與人之間的連結也是一種美好的學習。社交技能也是一種值得培養的智慧。",
+        traits: [
+          { name: "智慧值", value: 98, emoji: "🧠" },
+          { name: "專注力", value: 96, emoji: "📖" },
+          { name: "邏輯性", value: 95, emoji: "🔬" },
+          { name: "社交力", value: 40, emoji: "👥" }
+        ],
+        bestMatch: { type: "神秘特工", reason: "你們都珍惜獨處時光，能給彼此空間" },
+        clash: { type: "反叛貴族", reason: "她的衝動和你的理性經常產生矛盾" }
+      },
+      "反叛貴族": {
+        icon: "🔥",
+        title: "反叛貴族",
+        color: "#8b5cf6",
+        description: "抗拒規則和束縛，追求自由和自我，行為舉止不拘一格，我行我素，有獨特的野性魅力。可能與主流社會格格不入，但這正是你的魅力所在。",
+        personality: "你天生就是規則的挑戰者。你不是為了反抗而反抗，而是因為你相信自由比任何事都重要。你拒絕被定義，拒絕被束縛，拒絕成為別人期待的樣子。你活得真實而熱烈，從不掩飾自己的想法和慾望。你的存在本身就是一種宣言——我就是我，不需要任何人的認可。",
+        strength: "你的勇氣和真實是你最迷人的特質。你敢於做自己，敢於走不一樣的路，敢於承擔選擇的後果。你的野性和自由吸引著那些被規則困住的人。你不怕失敗，因為你知道真正的失敗是變成別人想要的樣子。你的生命力和熱情能點燃周圍的一切。",
+        weakness: "你太追求自由，有時會顯得自   或不負責任。不是所有規則都是束縛，有些規則是為了   護。不是所有妥協都是軟弱，有些妥協是為了走得更遠。試著在自由和責任之間找到平衡，你會發現真正的自由不是逃避，而是選擇。",
+        traits: [
+          { name: "自由度", value: 98, emoji: "🦅" },
+          { name: "叛逆指數", value: 95, emoji: "⚡" },
+          { name: "勇氣值", value: 92, emoji: "🔥" },
+          { name: "服從度", value: 15, emoji: "🎭" }
+        ],
+        bestMatch: { type: "暗夜玫瑰", reason: "你們都不走尋常路，能欣賞彼此的獨特" },
+        clash: { type: "職場女王", reason: "她要掌控全局，你要自由奔放，難以妥協" }
+      },
+      "暗夜玫瑰": {
+        icon: "🌹",
+        title: "暗夜玫瑰",
+        color: "#7c2d8e",
+        description: "如同黑夜中綻放的玫瑰，美麗而危險。表面優雅神秘，內心深藏鋒芒。你懂得在黑暗中生存，在沉默中觀察，在關鍵時刻一擊致命。你的魅力帶著致命的吸引力。",
+        personality: "你是黑夜的女王，在陰影中綻放最美的姿態。你不需要陽光的   耀，因為你本身就是光。你懂得隱藏自己的真實意圖，在暗處觀察一切。你的優雅是武器，你的沉默是策略。你   不急於表現，因為你知道最致命的攻擊往往來自意想不到的角落。",
+        strength: "你的洞察力和耐心是你最強大的武器。你能看穿人心，讀懂局勢，在最恰當的時機出手。你的神秘感讓人著迷，你的智慧讓人敬畏。你懂得如何在黑暗中保護自己，也懂得如何在必要時展現鋒芒。你是天生的策略家，每一步都經過深思熟慮。",
+        weakness: "你太習慣在暗處行動，有時會錯過陽光下的美好。不是所有人都是敵人，不是所有關係都需要防備。試著偶爾走出陰影，你會發現信任和真誠也能帶來力量。黑夜中的玫瑰固然美麗，但陽光下的綻放同樣動人。",
+        traits: [
+          { name: "神秘感", value: 97, emoji: "🌙" },
+          { name: "洞察力", value: 96, emoji: "👁️" },
+          { name: "策略性", value: 95, emoji: "♟️" },
+          { name: "信任度", value: 30, emoji: "🔒" }
+        ],
+        bestMatch: { type: "反叛貴族", reason: "你們都不走尋常路，能欣賞彼此的獨特" },
+        clash: { type: "世家千金", reason: "她的天真和你的深沉形成強烈對比" }
+      }
+    };
+
+    let currentQuestion = 0;
+    let scores = {
+      "職場女王": 0,
+      "世家千金": 0,
+      "神秘特工": 0,
+      "天才學霸": 0,
+      "反  貴族": 0,
+      "暗夜玫瑰": 0
+    };
+    let selectedOption = null;
+    let countdownTimer = null;
+    let timeLeft = 12;
+
+    function startQuiz() {
+      document.getElementById('startScreen').style.display = 'none';
+      document.getElementById('quizScreen').style.display = 'block';
+      currentQuestion = 0;
+      scores = {
+        "職場女王": 0,
+        "世家千金": 0,
+        "神秘特工": 0,
+        "天才學霸": 0,
+        "反叛貴族": 0,
+        "暗夜玫瑰": 0
+      };
+      loadQuestion();
+    }
+
+    function loadQuestion() {
+      selectedOption = null;
+      timeLeft = 12;
+      const question = quizData[currentQuestion];
+      
+      document.getElementById('questionCounter').textContent = `第 ${currentQuestion + 1} 題 / 共 ${quizData.length} 題`;
+      document.getElementById('progressBar').style.width = `${((currentQuestion + 1) / quizData.length) * 100}%`;
+      document.getElementById('questionEmoji').textContent = question.emoji;
+      document.getElementById('questionText').textContent = question.question;
+      
+      const container = document.getElementById('optionsContainer');
+      container.innerHTML = '';
+      
+      question.options.forEach((option, index) => {
+        const optionCard = document.createElement('div');
+        optionCard.className = 'option-card p-5 rounded-2xl';
+        optionCard.innerHTML = `
+          <div class="flex items-start gap-4">
+            <div class="w-8 h-8 rounded-full flex items-center justify-center font-bold text-purple-600 flex-shrink-0" style="background: rgba(224, 176, 213, 0.2);">
+              ${String.fromCharCode(65 + index)}
+            </div>
+            <div class="text-lg text-gray-700 leading-relaxed">${option.text}</div>
+          </div>
+        `;
+        optionCard.onclick = () => selectOption(option.type, optionCard);
+        container.appendChild(optionCard);
+      });
+      
+      startCountdown();
+    }
+    
+    function startCountdown() {
+      if (countdownTimer) clearInterval(countdownTimer);
+      
+      timeLeft = 12;
+      updateCountdownDisplay();
+      
+      countdownTimer = setInterval(() => {
+        timeLeft--;
+        updateCountdownDisplay();
+        
+        if (timeLeft <= 0) {
+          clearInterval(countdownTimer);
+          if (selectedOption === null) {
+            autoSelectFirstOption();
+          }
+          setTimeout(() => {
+            nextQuestion();
+          }, 500);
+        }
+      }, 1000);
+    }
+    
+    function updateCountdownDisplay() {
+      const countdownText = document.getElementById('countdownText');
+      const countdownPath = document.getElementById('countdownPath');
+      
+      if (countdownText) countdownText.textContent = timeLeft;
+      if (countdownPath) {
+        const progress = (timeLeft / 12) * 100.53;
+        countdownPath.style.strokeDashoffset = 100.53 - progress;
+      }
+    }
+    
+    function autoSelectFirstOption() {
+      const question = quizData[currentQuestion];
+      const firstOption = question.options[0];
+      selectedOption = firstOption.type;
+      scores[firstOption.type]++;
+      
+      const firstCard = document.querySelector('.option-card');
+      if (firstCard) {
+        firstCard.classList.add('selected');
+      }
+    }
+
+    function selectOption(type, card) {
+      if (selectedOption !== null) {
+        scores[selectedOption]--;
+      }
+      
+      const allCards = document.querySelectorAll('.option-card');
+      allCards.forEach(c => c.classList.remove('selected'));
+      card.classList.add('selected');
+      selectedOption = type;
+      scores[type]++;
+    }
+
+    function nextQuestion() {
+      if (countdownTimer) {
+        clearInterval(countdownTimer);
+      }
+      
+      currentQuestion++;
+      if (currentQuestion < quizData.length) {
+        loadQuestion();
+      } else {
+        showResults();
+      }
+    }
+
+    function showResults() {
+      if (countdownTimer) {
+        clearInterval(countdownTimer);
+      }
+      
+      // 先滾動到最上方
+      window.scrollTo(0, 0);
+      const appWrapper = document.querySelector('.app-wrapper');
+      if (appWrapper) {
+        appWrapper.scrollTop = 0;
+      }
+      document.body.scrollTop = 0;
+      document.documentElement.scrollTop = 0;
+      
+      // 然後顯示結果頁
+      document.getElementById('quizScreen').style.display = 'none';
+      document.getElementById('resultScreen').style.display = 'block';
+      
+      // 再次確保滾動到最上方
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        if (appWrapper) {
+          appWrapper.scrollTop = 0;
+        }
+        document.body.scrollTop = 0;
+        document.documentElement.scrollTop = 0;
+      }, 50);
+      
+      let maxScore = 0;
+      let resultType = "職場女王";
+      
+      for (let type in scores) {
+        if (scores[type] > maxScore) {
+          maxScore = scores[type];
+          resultType = type;
+        }
+      }
+      
+      const result = resultTypes[resultType];
+      document.getElementById('resultIcon').textContent = result.icon;
+      document.getElementById('resultTitle').textContent = result.title;
+      document.getElementById('resultTitle').style.color = result.color;
+      document.getElementById('resultDescription').textContent = result.description;
+      document.getElementById('resultPersonality').textContent = result.personality;
+      document.getElementById('resultStrength').textContent = result.strength;
+      document.getElementById('resultWeakness').textContent = result.weakness;
+      document.getElementById('resultCard').style.borderColor = result.color;
+      
+      const traitsContainer = document.getElementById('traitsContainer');
+      traitsContainer.innerHTML = '';
+      result.traits.forEach(trait => {
+        const traitCard = document.createElement('div');
+        traitCard.className = 'trait-card text-center';
+        traitCard.innerHTML = `
+          <div class="text-3xl mb-2">${trait.emoji}</div>
+          <div class="text-sm text-gray-600 mb-2">${trait.name}</div>
+          <div class="text-2xl font-black" style="color: ${result.color};">${trait.value}%</div>
+        `;
+        traitsContainer.appendChild(traitCard);
+      });
+      
+      document.getElementById('bestMatchType').textContent = result.bestMatch.type;
+      document.getElementById('bestMatchReason').textContent = result.bestMatch.reason;
+      document.getElementById('clashType').textContent = result.clash.type;
+      document.getElementById('clashReason').textContent = result.clash.reason;
+    }
+
+    function restartQuiz() {
+      if (countdownTimer) {
+        clearInterval(countdownTimer);
+      }
+      
+      document.getElementById('resultScreen').style.display = 'none';
+      document.getElementById('startScreen').style.display = 'block';
+      currentQuestion = 0;
+      selectedOption = null;
+      timeLeft = 12;
+      scores = {
+        "職場女王": 0,
+        "世家千金": 0,
+        "神秘特工": 0,
+        "天才學霸": 0,
+        "反叛貴族": 0,
+        "暗夜玫瑰": 0
+      };
+    }
+
+    let longPressTimer = null;
+    let saveHintElement = null;
+
+    function showSaveHint(message) {
+      if (saveHintElement) {
+        saveHintElement.remove();
+      }
+      
+      saveHintElement = document.createElement('div');
+      saveHintElement.className = 'save-hint';
+      saveHintElement.textContent = message;
+      document.body.appendChild(saveHintElement);
+      
+      setTimeout(() => {
+        if (saveHintElement) {
+          saveHintElement.remove();
+          saveHintElement = null;
+        }
+      }, 2500);
+    }
+
+    async function captureResultAsImage() {
+      const resultScreen = document.getElementById('resultScreen');
+      if (!resultScreen || resultScreen.style.display === 'none') return;
+      
+      resultScreen.classList.add('capturing');
+      showSaveHint('正在生成圖片...');
+      
+      try {
+        const canvas = await html2canvas(resultScreen, {
+          backgroundColor: null,
+          scale: 2,
+          logging: false,
+          useCORS: true,
+          allowTaint: true
+        });
+        
+        canvas.toBlob((blob) => {
+          const url = URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.href = url;
+          link.download = '我的女主測驗結果.png';
+          link.click();
+          URL.revokeObjectURL(url);
+          
+          resultScreen.classList.remove('capturing');
+          showSaveHint('✅ 圖片已保存！');
+        }, 'image/png');
+      } catch (error) {
+        console.error('保存圖片失敗:', error);
+        resultScreen.classList.remove('capturing');
+        showSaveHint('❌ 保存失敗，請重試');
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const resultScreen = document.getElementById('resultScreen');
+      
+      resultScreen.addEventListener('touchstart', (e) => {
+        if (resultScreen.style.display !== 'none') {
+          longPressTimer = setTimeout(() => {
+            captureResultAsImage();
+          }, 800);
+        }
+      });
+      
+      resultScreen.addEventListener('touchend', () => {
+        if (longPressTimer) {
+          clearTimeout(longPressTimer);
+          longPressTimer = null;
+        }
+      });
+      
+      resultScreen.addEventListener('touchmove', () => {
+        if (longPressTimer) {
+          clearTimeout(longPressTimer);
+          longPressTimer = null;
+        }
+      });
+      
+      resultScreen.addEventListener('mousedown', (e) => {
+        if (resultScreen.style.display !== 'none') {
+          longPressTimer = setTimeout(() => {
+            captureResultAsImage();
+          }, 800);
+        }
+      });
+      
+      resultScreen.addEventListener('mouseup', () => {
+        if (longPressTimer) {
+          clearTimeout(longPressTimer);
+          longPressTimer = null;
+        }
+      });
+      
+      resultScreen.addEventListener('mouseleave', () => {
+        if (longPressTimer) {
+          clearTimeout(longPressTimer);
+          longPressTimer = null;
+        }
+      });
+    });
+
+    async function onConfigChange(config) {
+      const baseFont = config.font_family || defaultConfig.font_family;
+      const baseFontStack = 'sans-serif';
+      const baseSize = config.font_size || defaultConfig.font_size;
+      
+      document.body.style.fontFamily = `${baseFont}, ${baseFontStack}`;
+      
+      const bgGradient = `linear-gradient(135deg, ${config.background_color || defaultConfig.background_color} 0%, ${config.primary_action_color || defaultConfig.primary_action_color} 50%, ${config.secondary_action_color || defaultConfig.secondary_action_color} 100%)`;
+      document.querySelector('.app-wrapper').style.background = bgGradient;
+      
+      const cards = document.querySelectorAll('.card');
+      cards.forEach(card => {
+        card.style.backgroundColor = `${config.surface_color || defaultConfig.surface_color}f2`;
+      });
+      
+      const buttons = document.querySelectorAll('.btn-primary');
+      const btnGradient = `linear-gradient(135deg, ${config.primary_action_color || defaultConfig.primary_action_color} 0%, ${config.secondary_action_color || defaultConfig.secondary_action_color} 100%)`;
+      buttons.forEach(btn => {
+        btn.style.background = btnGradient;
+      });
+      
+      const titleElement = document.getElementById('quizTitleText');
+      if (titleElement) {
+        titleElement.textContent = config.quiz_title || defaultConfig.quiz_title;
+        titleElement.style.fontSize = `${baseSize * 3.75}px`;
+      }
+      
+      const subtitleElement = document.getElementById('quizSubtitleText');
+      if (subtitleElement) {
+        subtitleElement.textContent = config.quiz_subtitle || defaultConfig.quiz_subtitle;
+        subtitleElement.style.fontSize = `${baseSize * 1.25}px`;
+      }
+      
+      const startButton = document.getElementById('startButtonText');
+      if (startButton) {
+        startButton.textContent = config.start_button_text || defaultConfig.start_button_text;
+      }
+      
+      const questionTextElement = document.getElementById('questionText');
+      if (questionTextElement) {
+        questionTextElement.style.fontSize = `${baseSize * 1.875}px`;
+        questionTextElement.style.color = config.text_color || defaultConfig.text_color;
+      }
+    }
+
+    if (window.elementSdk) {
+      window.elementSdk.init({
+        defaultConfig,
+        onConfigChange,
+        mapToCapabilities: (config) => ({
+          recolorables: [
+            {
+              get: () => config.background_color || defaultConfig.background_color,
+              set: (value) => {
+                config.background_color = value;
+                window.elementSdk.setConfig({ background_color: value });
+              }
+            },
+            {
+              get: () => config.surface_color || defaultConfig.surface_color,
+              set: (value) => {
+                config.surface_color = value;
+                window.elementSdk.setConfig({ surface_color: value });
+              }
+            },
+            {
+              get: () => config.text_color || defaultConfig.text_color,
+              set: (value) => {
+                config.text_color = value;
+                window.elementSdk.setConfig({ text_color: value });
+              }
+            },
+            {
+              get: () => config.primary_action_color || defaultConfig.primary_action_color,
+              set: (value) => {
+                config.primary_action_color = value;
+                window.elementSdk.setConfig({ primary_action_color: value });
+              }
+            },
+            {
+              get: () => config.secondary_action_color || defaultConfig.secondary_action_color,
+              set: (value) => {
+                config.secondary_action_color = value;
+                window.elementSdk.setConfig({ secondary_action_color: value });
+              }
+            }
+          ],
+          borderables: [],
+          fontEditable: {
+            get: () => config.font_family || defaultConfig.font_family,
+            set: (value) => {
+              config.font_family = value;
+              window.elementSdk.setConfig({ font_family: value });
+            }
+          },
+          fontSizeable: {
+            get: () => config.font_size || defaultConfig.font_size,
+            set: (value) => {
+              config.font_size = value;
+              window.elementSdk.setConfig({ font_size: value });
+            }
+          }
+        }),
+        mapToEditPanelValues: (config) => new Map([
+          ["quiz_title", config.quiz_title || defaultConfig.quiz_title],
+          ["quiz_subtitle", config.quiz_subtitle || defaultConfig.quiz_subtitle],
+          ["start_button_text", config.start_button_text || defaultConfig.start_button_text]
+        ])
+      });
+    }
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9aec370cd57202cc',t:'MTc2NTg2NzQ5Ni4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
