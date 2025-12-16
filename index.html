@@ -15,9 +15,9 @@
     
     .app-wrapper {
       background: linear-gradient(135deg, #ffd1dc 0%, #e0b0d5 50%, #c8a2d0 100%);
-      min-height: 100%;
+      min-height: 100vh;
       width: 100%;
-      overflow: auto;
+      overflow-y: auto;
       font-family: 'Noto Sans TC', sans-serif;
     }
     
@@ -203,7 +203,7 @@
  </head>
  <body class="h-full">
   <div class="app-wrapper h-full">
-   <div class="h-full flex items-center justify-center p-4 md:p-6">
+   <div class="min-h-screen flex items-start justify-center p-4 md:p-6 overflow-y-auto">
     <div class="card w-full max-w-4xl p-6 md:p-12 fade-in" id="quizCard"><!-- Start Screen -->
      <div id="startScreen">
       <div class="text-center">
@@ -675,14 +675,11 @@
         clearInterval(countdownTimer);
       }
       
-      // 先滾動到最上方
-      window.scrollTo(0, 0);
-      const appWrapper = document.querySelector('.app-wrapper');
-      if (appWrapper) {
-        appWrapper.scrollTop = 0;
-      }
-      document.body.scrollTop = 0;
-      document.documentElement.scrollTop = 0;
+      document.documentElement.style.scrollBehavior = 'auto';
+
+  requestAnimationFrame(() => {
+    window.scrollTo({ top: 0, left: 0 });
+  });
       
       // 然後顯示結果頁
       document.getElementById('quizScreen').style.display = 'none';
