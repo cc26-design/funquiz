@@ -14,6 +14,7 @@
     }
     
     .app-wrapper {
+      /* 保持 app-wrapper 的全域粉色漸變背景 */
       background: linear-gradient(135deg, #ffd1dc 0%, #e0b0d5 50%, #c8a2d0 100%);
       min-height: 100vh;
       width: 100%;
@@ -22,6 +23,7 @@
     }
     
     .card {
+      /* 保持非結果頁的白色卡片效果 */
       background: rgba(255, 255, 255, 0.95);
       border-radius: 32px;
       box-shadow: 0 25px 70px rgba(0, 0, 0, 0.25);
@@ -95,7 +97,7 @@
     }
     
     .result-card {
-      /* 修改：結果卡片背景為粉色漸變（與 app-wrapper 相似），並使用圓角 */
+      /* 調整：結果卡片背景為粉色漸變（與 app-wrapper 相似），並使用圓角 */
       background: linear-gradient(135deg, #f8e4f0 0%, #ffd1dc 100%);
       border: 4px solid;
       border-radius: 20px; 
@@ -202,20 +204,23 @@
     /* === 手機優化 (Mobile Optimization) === */
     @media (max-width: 768px) {
       
-      /* 1. 移除最外層的白色卡片效果 (.card) */
-      .card {
+      /* 1. 移除結果頁最外層的白色卡片效果 (#resultScreen .card) */
+      #resultScreen .card {
         background: transparent !important; /* 背景透明 */
         box-shadow: none !important; /* 移除陰影 */
         border-radius: 0 !important; /* 移除圓角 */
         padding: 0 !important; /* 移除內邊距，讓內容頂到手機邊緣 */
-        margin: 0 !important; /* 移除外邊距 */
+        margin-left: 0 !important;
+        margin-right: 0 !important;
         max-width: 100%; 
         width: 100%;
       }
 
-      /* 2. 調整 .app-wrapper 讓結果頁背景呈現從粉色漸層到粉白色 */
+      /* 2. 設定結果頁的頁面背景：從粉色漸層到粉白色 */
+      /* 由於移除外層卡片，內容現在直接疊在 app-wrapper 上。我們需要重新定義 app-wrapper 在結果頁時的漸層。
+         由於 CSS 無法判斷 JS 狀態，我們將應用更接近粉色到粉白色的漸變，讓它在結果頁效果最佳。
+      */
       #resultScreen .app-wrapper {
-        /* 將頁面背景的漸層終點設為接近白色，以實現粉白色漸變到底部的效果 */
         background: linear-gradient(180deg, #ffd1dc 0%, #fef3f8 100%);
       }
       
@@ -229,6 +234,21 @@
           padding: 24px 16px !important; /* 調整內邊距，左右邊距設定小一點 */
           margin-bottom: 16px; 
       }
+
+      /* 4. 移除 result-card 內部白色區塊的背景和陰影，使其與頁面背景融合 */
+      .result-card .bg-white {
+          background: transparent !important;
+          box-shadow: none !important;
+          padding: 0 !important; /* 移除內部白色區塊的內邊距 */
+      }
+      
+      /* 5. 確保排版緊湊和邊距調整 */
+      
+      /* 標題與 Icon */
+      #resultScreen .title-font.text-3xl {
+          font-size: 1.5rem; 
+          padding: 0 16px;
+      }
       
       .result-card h3.title-font {
           font-size: 2.5rem !important; 
@@ -241,11 +261,7 @@
           margin-bottom: 16px;
       }
       
-      /* 4. 關鍵特質/建議區塊的內邊距調整 (保持內部區塊的白色背景，以區分內容) */
-      .result-card .bg-white {
-          padding: 16px; 
-      }
-      
+      /* 特質/建議區塊的文字縮小 */
       .result-card .bg-white h4 {
           font-size: 1.125rem; 
           margin-bottom: 8px;
@@ -256,15 +272,16 @@
           line-height: 1.5;
       }
       
-      /* 5. 特質分析網格優化 */
+      /* 特質分析網格優化 (保持 trait-card 本身的白色背景，以區分內容) */
       #traitsContainer {
           grid-template-columns: repeat(2, minmax(0, 1fr)); 
           gap: 8px; 
           margin-bottom: 24px;
-          padding: 0 16px; /* 補回結果頁拿掉的左右邊距 */
+          padding: 0 16px; /* 補回左右邊距 */
       }
       
       .trait-card {
+          background: white !important; /* 確保特質卡片保持白色背景 */
           padding: 16px 8px; 
           border-radius: 12px;
       }
@@ -277,29 +294,21 @@
           font-size: 1.25rem; 
       }
       
-      /* 6. 最合拍/容易摩擦區塊優化 (強制垂直堆疊) */
+      /* 最合拍/容易摩擦區塊優化 (強制垂直堆疊) */
       .grid-cols-1.md\:grid-cols-2 {
           grid-template-columns: 1fr;
           gap: 16px;
-          padding: 0 16px; /* 補回結果頁拿掉的左右邊距 */
+          padding: 0 16px; /* 補回左右邊距 */
       }
       
       .grid-cols-1.md\:grid-cols-2 .bg-gradient-to-r {
           padding: 16px;
       }
-      
-      .grid-cols-1.md\:grid-cols-2 h4 {
-          font-size: 1.125rem;
-      }
-      
-      .grid-cols-1.md\:grid-cols-2 p {
-          font-size: 0.9375rem;
-      }
 
-      /* 7. LINE CTA 區塊優化 (調整內邊距和字體) */
+      /* LINE CTA 區塊優化 */
       .bg-gradient-to-r.from-green-50.to-emerald-50 {
           padding: 24px 16px;
-          margin: 16px 16px 0; /* 補回邊距並增加上間距 */
+          margin: 16px 16px 32px; /* 補回左右邊距並增加上下間距 */
           border-radius: 12px;
       }
       
@@ -317,14 +326,9 @@
       #resultScreen #shareButton {
         display: none !important;
       }
-      
-      /* 調整結果頁標題字體大小 (原本的 text-3xl) */
-      #resultScreen .title-font.text-3xl {
-          font-size: 1.5rem; 
-          padding: 0 16px; /* 補回標題左右邊距 */
-      }
     }
-  </style>  <style>@view-transition { navigation: auto; }</style>
+  </style>
+ <style>@view-transition { navigation: auto; }</style>
   <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
  </head>
  <body class="h-full">
