@@ -148,7 +148,7 @@
       height: 120px;
       margin: 0 auto 24px;
       /* [修改 B.1] Icon 圓圈：很淺的粉色 */
-      background: #f3c4d9; 
+      background: #fef3f8; 
       border-radius: 50%;
       display: flex;
       align-items: center;
@@ -278,6 +278,10 @@
           font-size: 48px;
           margin-bottom: 16px;
       }
+
+      .result-card .result-icon {
+          background: #f3c4d9 !important; /* ✅ 只有手機變深粉 */
+      }
       
       /* 特質/建議區塊的文字縮小 */
       .result-card .bg-white h4 {
@@ -312,29 +316,22 @@
           font-size: 1.25rem; 
       }
       
-      /* [修改 B.2 & B.3] 最合拍/容易摩擦區塊優化 (強制垂直堆疊 & 圓角一致) */
       .grid-cols-1.md\:grid-cols-2 {
-         display: grid;
-         grid-template-columns: 1fr;
-         gap: 16px;
-         padding: 0 16px;
-      }
+          display: grid;
+          grid-template-columns: 1fr;
+          gap: 16px;
+          padding: 0 16px;
+          width: 100%;
+          box-sizing: border-box;
+       }
 
       .grid-cols-1.md\:grid-cols-2 > div {
-         width: 100%;
-         justify-items: center;
-      }
-
-      .grid-cols-1.md\:grid-cols-2 > div {
-         width: 100%;
-         margin-left: auto;     /* ✅ 保底置中 */
-         margin-right: auto;
-      }
-      
-      .grid-cols-1.md\:grid-cols-2 .bg-gradient-to-r {
-          padding: 16px;
-          border-radius: 12px; /* 確保圓角一致 */
-      }
+          width: 100%;
+          max-width: 100%;
+          margin: 0;
+          box-sizing: border-box;
+          justify-self: stretch;
+       }
 
       /* [修改 B.5] 重新測驗按鈕顏色和距離 */
       #resultScreen .text-center > .btn-primary { /* 鎖定重新測驗按鈕 */
