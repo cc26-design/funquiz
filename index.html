@@ -130,7 +130,7 @@
       height: 120px;
       margin: 0 auto 24px;
       /* [修改 B.1] Icon 圓圈：很淺的粉色 */
-      background: #fef3f8; 
+      background: #f3c4d9; 
       border-radius: 50%;
       display: flex;
       align-items: center;
@@ -296,13 +296,14 @@
       
       /* [修改 B.2 & B.3] 最合拍/容易摩擦區塊優化 (強制垂直堆疊 & 圓角一致) */
       .grid-cols-1.md\:grid-cols-2 {
-          grid-template-columns: 1fr;
-          .grid-cols-1.md\:grid-cols-2 > div {
-          width: 100%;
+         display: grid;
+         grid-template-columns: 1fr;
+         gap: 16px;
+         padding: 0 16px;
       }
 
-          gap: 16px;
-          padding: 0 16px; 
+      .grid-cols-1.md\:grid-cols-2 > div {
+         width: 100%;
       }
       
       .grid-cols-1.md\:grid-cols-2 .bg-gradient-to-r {
@@ -319,7 +320,7 @@
           box-shadow: 0 4px 15px rgba(200, 162, 208, 0.2);
           
           /* [修改 B.4] 距離調整：往下一點，與 LINE 框區隔 */
-          margin-top: 10px; 
+          margin-top: -10px; 
       }
 
 
@@ -476,7 +477,7 @@
        </div>
       </div>
       <div class="text-center mb-8">
-        <p class="text-purple-600 font-semibold text-lg">
+        <p id="shareLink" class="text-purple-500 font-medium text-sm md:text-base cursor-pointer select-none">
     💬 和朋友分享連結，一起來測測看誰是哪種女主
   </p>
       </div><div class="bg-gradient-to-r from-green-50 to-emerald-50 rounded-3xl p-8 mb-8 border-2 border-green-200">
