@@ -78,7 +78,7 @@
     .progress-fill {
       height: 100%;
       /* [修改 A.2] 橫線進度條：白色漸層到很淺的粉色 */
-      background: linear-gradient(90deg, #ffffff 0%, #fef3f8 100%);
+      background: linear-gradient(90deg, #ffd1dc 0%, #c8a2d0 100%);
       transition: width 0.5s ease;
       border-radius: 999px;
     }
@@ -282,12 +282,12 @@
       
       .trait-card {
           background: white !important; /* 確保特質卡片保持白色背景 */
-          padding: 16px 8px; 
+          padding: 12px 6px; 
           border-radius: 12px;
       }
       
       .trait-card .text-3xl {
-          font-size: 1.75rem; 
+          font-size: 1.5rem; 
       }
       
       .trait-card .text-2xl {
@@ -297,6 +297,10 @@
       /* [修改 B.2 & B.3] 最合拍/容易摩擦區塊優化 (強制垂直堆疊 & 圓角一致) */
       .grid-cols-1.md\:grid-cols-2 {
           grid-template-columns: 1fr;
+          .grid-cols-1.md\:grid-cols-2 > div {
+          width: 100%;
+      }
+
           gap: 16px;
           padding: 0 16px; 
       }
@@ -315,7 +319,7 @@
           box-shadow: 0 4px 15px rgba(200, 162, 208, 0.2);
           
           /* [修改 B.4] 距離調整：往下一點，與 LINE 框區隔 */
-          margin-top: 24px; 
+          margin-top: 10px; 
       }
 
 
@@ -389,9 +393,18 @@
        <div class="flex justify-between items-center mb-4"><span class="text-sm font-bold text-purple-600" id="questionCounter">第 1 題 / 共 8 題</span>
         <div class="flex items-center gap-3"><span class="text-sm font-semibold text-purple-500">剩餘時間</span>
          <div class="relative w-12 h-12">
-          <svg class="transform -rotate-90 w-12 h-12"><circle cx="24" cy="24" r="16" stroke="rgba(255, 255, 255, 0.5)" stroke-width="3" fill="none"></circle> <circle id="countdownPath" cx="24" cy="24" r="16" stroke="#ffffff" stroke-width="3" fill="none" style="stroke-dasharray: 100.53; stroke-dashoffset: 0; transition: stroke-dashoffset 1s linear;"></circle>
+          <svg class="transform -rotate-90 w-12 h-12"><circle cx="24" cy="24" r="16" stroke="rgba(255, 255, 255, 0.5)" stroke-width="3" fill="none"></circle> <circle
+  id="countdownPath"
+  cx="24"
+  cy="24"
+  r="16"
+  stroke="#e0b0d5"
+  stroke-width="3"
+  fill="none"
+  style="stroke-dasharray: 100.53; stroke-dashoffset: 0; transition: stroke-dashoffset 1s linear;"
+></circle>
           </svg>
-          <div class="absolute inset-0 flex items-center justify-center"><span id="countdownText" class="text-lg font-bold text-white">12</span>
+          <div class="absolute inset-0 flex items-center justify-center"><span id="countdownText" class="text-lg font-bold text-purple-500">12</span>
           </div>
          </div>
         </div>
@@ -463,8 +476,9 @@
        </div>
       </div>
       <div class="text-center mb-8">
-       <p class="text-gray-600 text-base mb-2">📸 長按畫面保存圖片</p>
-       <p class="text-purple-600 font-semibold text-lg">和朋友分享你的測驗結果～</p>
+        <p class="text-purple-600 font-semibold text-lg">
+    💬 和朋友分享連結，一起來測測看誰是哪種女主
+  </p>
       </div><div class="bg-gradient-to-r from-green-50 to-emerald-50 rounded-3xl p-8 mb-8 border-2 border-green-200">
        <div class="text-center">
         <p class="text-lg text-gray-700 leading-relaxed mb-6">💡 你的形象 值得被專業定義。<br>
