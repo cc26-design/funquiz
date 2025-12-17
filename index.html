@@ -9,6 +9,24 @@
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;900&amp;family=Noto+Sans+TC:wght@300;400;500;700&amp;display=swap" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
+
+    .share-link {
+      cursor: pointer;
+      text-decoration: underline;              /* ✅ 底線 */
+      text-underline-offset: 4px;               /* 底線離文字遠一點，比較精緻 */
+      text-decoration-thickness: 1.5px;         /* 底線不要太細 */
+      transition: color 0.2s ease, opacity 0.2s ease;
+    }
+
+    .share-link:hover {
+      color: #7c3aed;                           /* hover 時稍微深一點 */
+      opacity: 0.9;
+    }
+
+    .share-link:active {
+      opacity: 0.7;                             /* 手機按下回饋 */
+    }
+
     body {
       box-sizing: border-box;
     }
@@ -304,6 +322,13 @@
 
       .grid-cols-1.md\:grid-cols-2 > div {
          width: 100%;
+         justify-items: center;
+      }
+
+      .grid-cols-1.md\:grid-cols-2 > div {
+         width: 100%;
+         margin-left: auto;     /* ✅ 保底置中 */
+         margin-right: auto;
       }
       
       .grid-cols-1.md\:grid-cols-2 .bg-gradient-to-r {
@@ -477,8 +502,12 @@
        </div>
       </div>
       <div class="text-center mb-8">
-        <p id="shareLink" class="text-purple-500 font-medium text-sm md:text-base cursor-pointer select-none">
-    💬 和朋友分享連結，一起來測測看誰是哪種女主
+        <p id="shareLink"
+  role="button"
+  aria-label="複製測驗連結"
+  class="share-link text-purple-500 font-medium text-sm md:text-base select-none"
+>
+  💬 和朋友分享連結，一起來測測看吧!
   </p>
       </div><div class="bg-gradient-to-r from-green-50 to-emerald-50 rounded-3xl p-8 mb-8 border-2 border-green-200">
        <div class="text-center">
@@ -1120,6 +1149,27 @@
         ])
       });
     }
+  // 👇👇👇 在這裡「直接貼上」我給你的那段
+  document.addEventListener('DOMContentLoaded', () => {
+    const share = document.getElementById('shareLink');
+    if (!share) return;
+
+    share.addEventListener('click', async (e) => {
+      e.stopPropagation();
+      const url = window.location.href;
+
+      try {
+        if (navigator.clipboard && window.isSecureContext) {
+          await navigator.clipboard.writeText(url);
+        } else {
+          copyTextFallback(url);
+        }
+        showSaveHint('🔗 連結已複製，快傳給朋友！');
+      } catch (err) {
+        showSaveHint('❌ 複製失敗，請手動複製網址');
+      }
+    });
+  });
   </script>
  <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9aec370cd57202cc',t:'MTc2NTg2NzQ5Ni4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
