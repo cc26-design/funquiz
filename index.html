@@ -95,9 +95,10 @@
     }
     
     .result-card {
-      background: linear-gradient(135deg, #ffffff 0%, #fef3f8 100%);
+      /* 修改：結果卡片背景為粉色漸變（與 app-wrapper 相似），並使用圓角 */
+      background: linear-gradient(135deg, #f8e4f0 0%, #ffd1dc 100%);
       border: 4px solid;
-      border-radius: 20px;
+      border-radius: 20px; 
       padding: 40px;
       position: relative;
       overflow: hidden;
@@ -199,31 +200,37 @@
     }
     
     /* === 手機優化 (Mobile Optimization) === */
-    /* 針對最大寬度 768px 的設備（手機和平板直立模式）進行優化 */
     @media (max-width: 768px) {
       
-      /* 1. 減少卡片和整體頁面的左右留白 */
+      /* 1. 移除最外層的白色卡片效果 (.card) */
       .card {
-        padding: 24px; 
+        background: transparent !important; /* 背景透明 */
+        box-shadow: none !important; /* 移除陰影 */
+        border-radius: 0 !important; /* 移除圓角 */
+        padding: 0 !important; /* 移除內邊距，讓內容頂到手機邊緣 */
+        margin: 0 !important; /* 移除外邊距 */
         max-width: 100%; 
-        margin-left: 8px; 
-        margin-right: 8px;
+        width: 100%;
+      }
+
+      /* 2. 調整 .app-wrapper 讓結果頁背景呈現從粉色漸層到粉白色 */
+      #resultScreen .app-wrapper {
+        /* 將頁面背景的漸層終點設為接近白色，以實現粉白色漸變到底部的效果 */
+        background: linear-gradient(180deg, #ffd1dc 0%, #fef3f8 100%);
       }
       
-      /* 2. 結果頁標題字體大小調整 (原本的 text-3xl) */
-      #resultScreen .title-font.text-3xl {
-          font-size: 1.5rem; 
-      }
-      
-      /* 3. 結果卡片內邊距調整和標題字體縮小 */
+      /* 3. 調整 .result-card (女主類型的大框) */
       .result-card {
-          padding: 24px; 
+          /* 設定為透明，讓外層 app-wrapper 的粉色背景透出來 */
+          background: transparent !important; 
+          border: none !important; /* 移除邊框 */
+          box-shadow: none !important; /* 移除陰影 */
+          border-radius: 0 !important; /* 移除圓角 */
+          padding: 24px 16px !important; /* 調整內邊距，左右邊距設定小一點 */
           margin-bottom: 16px; 
-          border-radius: 16px;
       }
       
       .result-card h3.title-font {
-          /* 調整結果類型標題 (原本的 text-4xl/5xl) */
           font-size: 2.5rem !important; 
       }
       
@@ -234,7 +241,7 @@
           margin-bottom: 16px;
       }
       
-      /* 4. 關鍵特質/建議區塊的內邊距調整 */
+      /* 4. 關鍵特質/建議區塊的內邊距調整 (保持內部區塊的白色背景，以區分內容) */
       .result-card .bg-white {
           padding: 16px; 
       }
@@ -249,11 +256,12 @@
           line-height: 1.5;
       }
       
-      /* 5. 特質分析網格優化 (強制 2 欄，減少間距和字體) */
+      /* 5. 特質分析網格優化 */
       #traitsContainer {
           grid-template-columns: repeat(2, minmax(0, 1fr)); 
           gap: 8px; 
           margin-bottom: 24px;
+          padding: 0 16px; /* 補回結果頁拿掉的左右邊距 */
       }
       
       .trait-card {
@@ -273,6 +281,7 @@
       .grid-cols-1.md\:grid-cols-2 {
           grid-template-columns: 1fr;
           gap: 16px;
+          padding: 0 16px; /* 補回結果頁拿掉的左右邊距 */
       }
       
       .grid-cols-1.md\:grid-cols-2 .bg-gradient-to-r {
@@ -290,6 +299,8 @@
       /* 7. LINE CTA 區塊優化 (調整內邊距和字體) */
       .bg-gradient-to-r.from-green-50.to-emerald-50 {
           padding: 24px 16px;
+          margin: 16px 16px 0; /* 補回邊距並增加上間距 */
+          border-radius: 12px;
       }
       
       .bg-gradient-to-r.from-green-50.to-emerald-50 p.text-lg {
@@ -301,9 +312,19 @@
           padding: 12px 24px;
           font-size: 1rem;
       }
+
+      /* 隱藏結果頁的分享按鈕，避免和手機截圖功能衝突 */
+      #resultScreen #shareButton {
+        display: none !important;
+      }
+      
+      /* 調整結果頁標題字體大小 (原本的 text-3xl) */
+      #resultScreen .title-font.text-3xl {
+          font-size: 1.5rem; 
+          padding: 0 16px; /* 補回標題左右邊距 */
+      }
     }
-  </style>
-  <style>@view-transition { navigation: auto; }</style>
+  </style>  <style>@view-transition { navigation: auto; }</style>
   <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
  </head>
  <body class="h-full">
@@ -435,7 +456,7 @@
       <div class="bg-gradient-to-r from-green-50 to-emerald-50 rounded-3xl p-8 mb-8 border-2 border-green-200">
        <div class="text-center">
         <p class="text-lg text-gray-700 leading-relaxed mb-6">💡 你的形象 值得被專業定義。<br>
-          點擊下方按鈕加入 LINE 官方帳號，預約【小說女主形象改造】，讓你的形象從此專屬定製，不再將就</p><a href="https://line.me/R/ti/p/@YOUR_LINE_ID" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-3 bg-gradient-to-r from-green-500 to-green-600 text-white px-10 py-4 rounded-full text-lg font-bold hover:shadow-xl transition-all duration-300 hover:-translate-y-1"> <span class="text-2xl">💬</span> <span>加入 LINE 官方帳號</span> </a>
+          加入好友 預約【小說女主形象改造】，讓你的形象從此專屬定製，不再將就</p><a href="https://line.me/R/ti/p/@YOUR_LINE_ID" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-3 bg-gradient-to-r from-green-500 to-green-600 text-white px-10 py-4 rounded-full text-lg font-bold hover:shadow-xl transition-all duration-300 hover:-translate-y-1"> <span class="text-2xl">💬</span> <span>立即諮詢</span> </a>
        </div>
       </div>
       <div class="text-center"><button onclick="restartQuiz()" class="btn-primary text-white px-12 py-4 rounded-full text-lg font-bold"> 重新測驗 </button>
